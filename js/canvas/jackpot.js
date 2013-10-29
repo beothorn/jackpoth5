@@ -1,7 +1,9 @@
-document.getElementById("seed").value = Date.now();
-var timeElement = document.getElementById("time");
 var runnersElement = document.getElementById("runners");
-var losersElement = document.getElementById("losers");
+var seedElement = document.getElementById("seed");
+var configElement = document.getElementById("config");
+var seededWidthElement = document.getElementById("seededWidth");
+var seededHeightElement = document.getElementById("seededHeight");
+var isSeededElement = document.getElementById("isSeeded");
 
 var ballWidth = 26;
 var ballHeight = 26;
@@ -36,16 +38,44 @@ resources.load(
 			context.fillText("Loading "+percetLoaded+"%", 10, 10);
 		},
 		loadingComplete: function(){
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			context.fillText("Fill the list and press play", canvas.width/2, canvas.height/2);
-			context.font = "bold 20px Arial";
-			context.strokeStyle = "black";
-    		context.lineWidth = 3;
-    		context.fillStyle = "white";
+
 			//Set play button visible
 		} 
 	}
 );
+
+function setupCanvas(){
+	if(isSeededElement.checked){
+		context.canvas.width  = seededWidthElement.value;
+		context.canvas.height = seededHeightElement.value;
+	}else{
+		context.canvas.width  = window.innerWidth;
+		context.canvas.height = window.innerHeight;	
+	}
+	
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	context.font = "bold 20px Arial";
+	context.strokeStyle = "black";
+	context.lineWidth = 3;
+	context.fillStyle = "white";
+	context.textAlign="center";
+}
+
+
+var enter = 13;
+var escape = 27;
+document.onkeydown = function(e) {
+	if(running){
+    	if(e.keyCode === enter){
+			killerBall();
+			e.preventDefault();
+		}
+    }
+	if(e.keyCode === escape){
+		stop();
+		e.preventDefault();
+	}
+};
 
 function areColliding(point1, point2){
     var xs = point2.x - point1.x;
@@ -61,27 +91,12 @@ function normalize(x,y){
 	return {x:(x / length), y:(y / length)};
 }
 
-function onDeath(ball){
-	var names = runnersElement.value.split("\n");
-	var liveNames = "";
-	for(var i in names){
-		if(ball.name==names[i]){
-			losersElement.value += names[i] + "\n";
-		}else{
-			liveNames += names[i] + "\n";
-		}
-	}
-	runnersElement.value = liveNames.trim();
-}
-
 function onCollision(a, b){
 	if(a.killer && !b.killer){
-		onDeath(b);
 		b.dead = true;
 	}
 	if(!a.killer && b.killer){
 		a.dead = true;
-		onDeath(a);
 	}
 	
 	var normal = normalize(a.x-b.x,a.y-b.y);
@@ -108,8 +123,7 @@ function isCollidingWithAny(a){
 }
 
 function printTime(time){
-	timeElement.removeChild( timeElement.firstChild );
-	timeElement.appendChild( document.createTextNode(time) );	
+	context.fillText(time,10,10);	
 }
 
 function Ball(x, y, xSpeed, ySpeed, name){
@@ -147,16 +161,30 @@ function killerBall(){
 	elements.push(firstKiller);
 }
 	
-function restart(){
-	var seed = document.getElementById("seed").value;
+function getSeed(){
+	if(!isSeededElement.checked)
+		return Date.now()+"";
+	return seedElement.value;
+}
+
+function stop(){
+	configElement.style.display="block";
+	canvas.style.display="none";
+	running = false;
+}
+
+function restart(){	
+	configElement.style.display="none";
+	canvas.style.display="block";
+	setupCanvas();
+	
+	var seed = getSeed();
 	Math.seedrandom(seed);
-	runnersElement.value = (runnersElement.value + "\n" + losersElement.value).trim();
 	var names = runnersElement.value.split('\n').sort().filter(
 		function (value, index, self) { 
     		return self.indexOf(value) === index;
 		}
 	);
-	losersElement.value = "";
 	
 	timePassed = 0;
 	running = true;

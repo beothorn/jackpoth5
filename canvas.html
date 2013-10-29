@@ -1,17 +1,31 @@
 <html>
 <head>
+<style>
+html, body {
+  width:  100%;
+  height: 100%;
+  margin: 0px;
+} 
+canvas{
+	background-image:url("images/canvas/cream_pixels.png");/* from subtlepatterns.com */
+	padding: 0px;
+	margin: 0px;	
+}
+</style>
 </head>
 <body>
 	
-	<canvas id="game-canvas" width="1024" height="768" style="border:1px solid #d3d3d3;">
+	<canvas id="game-canvas" width="1024" height="768" style="display:none;" >
 		Your browser does not support the HTML5 canvas tag.
 	</canvas>
+<div id="config">
+
 	<br>
-	Time: <span id="time">0</span>
-	Seed: <input type="text" id="seed" value="12345" onload="javascript:this.value=Date.now()">
-	<a><img src="images/canvas/play.png" onclick="javascript:restart()"></a>
-	<a><img src="images/canvas/newKillerBall.png" onclick="javascript:killerBall()"></a>
-	Participants:<textarea id="runners" rows="10" cols="50">Adriano
+	<input type="checkbox" id="isSeeded" onclick="isSeededChanged()" >Game with seed<br>
+	Seed:   <input type="text" id="seed" disabled="disabled"><br>
+	Width:  <input type="text" id="seededWidth" disabled="disabled"> <br>
+	Height: <input type="text" id="seededHeight" disabled="disabled"> <br>
+	Participants:<br><textarea id="runners" rows="50" cols="50">Adriano
 Antonio
 Arbo
 Caimi
@@ -81,12 +95,13 @@ Ludivina Boddie
 Veronique Hawkinson
 Ayanna Keala
 Breana Fortney
-Josphine Mattson</textarea>
-Eliminated:<textarea id="losers" readonly rows="10" cols="50"></textarea>
-
+Josphine Mattson</textarea><br>
+	<a><img src="images/canvas/play.png" onclick="restart()"></a>
+</div>
 	<script type="text/javascript" src="js/canvas/Resources.js"></script>
 	<script type="text/javascript" src="js/canvas/BallFactory.js"></script>
 	<script type="text/javascript" src="js/canvas/seedrandom.js"></script>
+	<script type="text/javascript" src="js/canvas/PageWiring.js"></script>
 	<script type="text/javascript" src="js/canvas/jackpot.js"></script>
 </body>
 </html>
