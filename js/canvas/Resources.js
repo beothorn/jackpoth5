@@ -20,6 +20,7 @@ function Resources(){
 				var image = new Image();
 				var imageUrl = imageResourcesURLs[i].url;
 				var imageName = imageResourcesURLs[i].name;
+				console.log("imageName "+imageName);
 				
 				image.onload = function(){
 					var m_canvas = document.createElement('canvas');
@@ -32,6 +33,9 @@ function Resources(){
 					resourcesLoaded++;
 					var newPercetage = (resourcesLoaded/resourceCount)*100;
 					percentageListener.updateLoadedPercentage(newPercetage);
+					console.log("imageName "+imageName);
+					console.log("resourcesLoaded "+resourcesLoaded);
+					console.log("resourceCount "+resourceCount);
 					if(resourcesLoaded == resourceCount){
 						percentageListener.loadingComplete();
 					}
@@ -52,8 +56,12 @@ function Resources(){
 				//screw it, this does not preload audio
 				//TODO: one function
 				resourcesLoaded++;
+				console.log("AUDIO ");
 				var newPercetage = (resourcesLoaded/resourceCount)*100;
 				percentageListener.updateLoadedPercentage(newPercetage);
+				console.log("audioName "+audioName);
+				console.log("resourcesLoaded "+resourcesLoaded);
+				console.log("resourceCount "+resourceCount);
 				if(resourcesLoaded == resourceCount){
 					percentageListener.loadingComplete();	
 				}
