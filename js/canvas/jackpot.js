@@ -12,6 +12,8 @@ var timePassed = 0;
 var lastLoopTime = Date.now();
 var delta = 0;
 var lastGeneratedBallTime = 0;
+var replayableGame = true;
+var gameEnded = false;
 
 var canvas= document.getElementById("game-canvas");
 var context= canvas.getContext("2d");
@@ -59,12 +61,53 @@ function setCanvaContextPausedScreenValues(){
 	context.textAlign="center";
 }
 
+function freezeScreen(){
+	var currentPixels = context.getImageData(0, 0, canvas.width, canvas.height);
+	var d = currentPixels.data;
+	for (var i=0; i<d.length; i+=4) {
+		var r = d[i];
+		var g = d[i+1];
+		var b = d[i+2];
+		// CIE luminance for the RGB
+		// The human eye is bad at seeing red and blue, so we de-emphasize them.
+		var v = 0.2126*r + 0.7152*g + 0.0722*b;
+		d[i] = d[i+1] = d[i+2] = v;
+		
+		if(d[i+3] === 0){
+			d[i] = d[i+1] = d[i+2] = 0;
+			d[i+3] -= 0 ;	
+		}
+	}
+	context.putImageData(currentPixels, 0, 0);
+	context.fillStyle = "rgba(255, 255, 255, 0.8)";
+	context.fillRect(0, 0, canvas.width, canvas.height);
+	setCanvaContextPausedScreenValues();
+}
+
+function showWinningScreen(winner){
+	gameEnded = true;
+	freezeScreen();
+	context.font = "bold 40px Arial";
+	context.fillStyle = "gray";
+	fillStrokedText("Winner", canvas.width/2, canvas.height/2 - 80);
+	context.font = "bold 80px Arial";
+	context.fillStyle = "yellow";
+	fillStrokedText(winner, canvas.width/2, canvas.height/2);
+	setCanvaContextPausedScreenValues();
+	if(replayableGame){
+		fillStrokedText("Seed: "+getSeed(), canvas.width/2, canvas.height/2 + 80);
+		fillStrokedText("Width: "+canvas.width, canvas.width/2, canvas.height/2 + 80 + 40);
+		fillStrokedText("Height: "+canvas.height, canvas.width/2, canvas.height/2 + 80 + 40 + 40);	
+	}
+}
+
 var enter = 13;
 var escape = 27;
 var space = 32;
 document.onkeydown = function(e) {
 	if(running){ 
     	if(e.keyCode === enter){
+			replayableGame = false;
 			killerBall();
 			e.preventDefault();
 		}
@@ -74,29 +117,14 @@ document.onkeydown = function(e) {
 		e.preventDefault();
 	}
 	if(e.keyCode === space){
+		if(gameEnded){
+			e.preventDefault();
+			return;
+		}
 		if(running){
 			running = false;
 			
-		    var currentPixels = context.getImageData(0, 0, canvas.width, canvas.height);
-			var d = currentPixels.data;
-			for (var i=0; i<d.length; i+=4) {
-				var r = d[i];
-				var g = d[i+1];
-				var b = d[i+2];
-				// CIE luminance for the RGB
-				// The human eye is bad at seeing red and blue, so we de-emphasize them.
-				var v = 0.2126*r + 0.7152*g + 0.0722*b;
-				d[i] = d[i+1] = d[i+2] = v;
-				
-				if(d[i+3] === 0){
-					d[i] = d[i+1] = d[i+2] = 0;
-					d[i+3] -= 0 ;	
-				}
-			}
-			context.putImageData(currentPixels, 0, 0);
-			context.fillStyle = "rgba(255, 255, 255, 0.8)";
-			context.fillRect(0, 0, canvas.width, canvas.height);
-			setCanvaContextPausedScreenValues();
+			freezeScreen();
 			
 			context.font = "bold 80px Arial";
 			context.fillStyle = "yellow";
@@ -242,6 +270,8 @@ function stop(){
 function restart(){
 	
 	Math.seedrandom(getSeed());
+	replayableGame = true;
+	gameEnded = false;
 	var names = gameOptions.players;
 	
 	timePassed = 0;
@@ -312,8 +342,13 @@ function loop(){
 			elements[i].paint(delta);
 		}
 	}
-	if(liveCount == gameOptions.prizes)
+	if(liveCount == gameOptions.prizes){
 		running = false;
+		for(var i=elements.length-1;i>=0;i--){
+			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
+				showWinningScreen(elements[i].name);
+		}
+	}
 	lastLoopTime = Date.now();
 	delta = 0;
 	requestAnimationFrame(loop);			

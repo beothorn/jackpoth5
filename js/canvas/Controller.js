@@ -25,7 +25,8 @@ playElement.onclick = function(){
 	configElement.style.display="none";
 	canvas.style.display="block";
 	
-	var seed = Date.now()+"";
+	var dateNow = Date.now()+"";
+	var seed = dateNow.substr(dateNow.length-3,dateNow.length);
 	if(isSeededElement.checked){
 	    seed = seedElement.value;
 	       
