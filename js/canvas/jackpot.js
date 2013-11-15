@@ -104,7 +104,7 @@ var enter = 13;
 var escape = 27;
 var space = 32;
 document.onkeydown = function(e) {
-	if(running){ 
+	if(running && !isOnCountdown){ 
     	if(e.keyCode === enter){
 			replayableGame = false;
 			killerBall();
