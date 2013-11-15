@@ -50,7 +50,7 @@ playElement.onclick = function(){
 	
 	console.log(gameOptions);
 	
-    restart();
+    start();
 }
 
 isSeededElement.onclick = function(){

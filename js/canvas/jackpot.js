@@ -79,7 +79,7 @@ function freezeScreen(){
 		}
 	}
 	context.putImageData(currentPixels, 0, 0);
-	context.fillStyle = "rgba(255, 255, 255, 0.8)";
+	context.fillStyle = "rgba(255, 255, 255, 0.5 )";
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	setCanvaContextPausedScreenValues();
 }
@@ -267,8 +267,11 @@ function stop(){
 	running = false;
 }
 
+function start(){
+	restart();
+}
+
 function restart(){
-	
 	Math.seedrandom(getSeed());
 	replayableGame = true;
 	gameEnded = false;
@@ -293,17 +296,7 @@ function restart(){
 	requestAnimationFrame(loop);
 }
 
-function loop(){
-	if(!running) return;
-	var currentTime = Date.now();
-	delta += currentTime - lastLoopTime;
-	if(delta < frameLimit){
-		lastLoopTime = Date.now();
-		requestAnimationFrame(loop);
-		return;	
-	}
-	timePassed+=frameLimit;
-	var timePassedInSeconds = Math.floor(timePassed/1000);
+function stepGame(timePassedInSeconds){
 	if(timePassedInSeconds-lastGeneratedBallTime >= gameOptions.generationInterval){
 		lastGeneratedBallTime = timePassedInSeconds;
 		killerBall();
@@ -348,7 +341,23 @@ function loop(){
 			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
 				showWinningScreen(elements[i].name);
 		}
+	}	
+}
+
+function loop(){
+	if(!running) return;
+	var currentTime = Date.now();
+	delta += currentTime - lastLoopTime;
+	if(delta < frameLimit){
+		lastLoopTime = Date.now();
+		requestAnimationFrame(loop);
+		return;	
 	}
+	timePassed+=frameLimit;
+	var timePassedInSeconds = Math.floor(timePassed/1000);
+	
+	stepGame(timePassedInSeconds);
+	
 	lastLoopTime = Date.now();
 	delta = 0;
 	requestAnimationFrame(loop);			
