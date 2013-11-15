@@ -11,7 +11,6 @@ var running = false;
 var timePassed = 0;
 var lastLoopTime = Date.now();
 var delta = 0;
-var lastGeneratedBallTime = 0;
 var replayableGame = true;
 var gameEnded = false;
 
@@ -45,7 +44,7 @@ function fillStrokedText(text, x, y){
 	context.fillText(text, x, y);
 }
 
-function setCanvaContextDefaultValues(){
+function setCanvasContextDefaultValues(){
 	context.font = "bold 20px Arial";
 	context.strokeStyle = "black";
 	context.lineWidth = 3;
@@ -53,7 +52,7 @@ function setCanvaContextDefaultValues(){
 	context.textAlign="center";	
 }
 
-function setCanvaContextPausedScreenValues(){
+function setCanvasContextPausedScreenValues(){
 	context.font = "bold 40px Arial";
 	context.strokeStyle = "black";
 	context.lineWidth = 3;
@@ -79,9 +78,9 @@ function freezeScreen(){
 		}
 	}
 	context.putImageData(currentPixels, 0, 0);
-	context.fillStyle = "rgba(255, 255, 255, 0.8)";
+	context.fillStyle = "rgba(255, 255, 255, 0.5 )";
 	context.fillRect(0, 0, canvas.width, canvas.height);
-	setCanvaContextPausedScreenValues();
+	setCanvasContextPausedScreenValues();
 }
 
 function showWinningScreen(winner){
@@ -93,7 +92,7 @@ function showWinningScreen(winner){
 	context.font = "bold 80px Arial";
 	context.fillStyle = "yellow";
 	fillStrokedText(winner, canvas.width/2, canvas.height/2);
-	setCanvaContextPausedScreenValues();
+	setCanvasContextPausedScreenValues();
 	if(replayableGame){
 		fillStrokedText("Seed: "+getSeed(), canvas.width/2, canvas.height/2 + 80);
 		fillStrokedText("Width: "+canvas.width, canvas.width/2, canvas.height/2 + 80 + 40);
@@ -105,7 +104,7 @@ var enter = 13;
 var escape = 27;
 var space = 32;
 document.onkeydown = function(e) {
-	if(running){ 
+	if(running && !isOnCountdown){ 
     	if(e.keyCode === enter){
 			replayableGame = false;
 			killerBall();
@@ -129,11 +128,11 @@ document.onkeydown = function(e) {
 			context.font = "bold 80px Arial";
 			context.fillStyle = "yellow";
 			fillStrokedText("Paused", canvas.width/2, canvas.height/2);
-			setCanvaContextPausedScreenValues();
+			setCanvasContextPausedScreenValues();
 			fillStrokedText("Add ball: <Enter>", canvas.width/2, canvas.height/2 + 80);
 			fillStrokedText("Exit: <Esc>", canvas.width/2, canvas.height/2 + 80 + 40);
 			
-			setCanvaContextDefaultValues();
+			setCanvasContextDefaultValues();
 		}else{
 			running = true;
 			loop();
@@ -267,8 +266,15 @@ function stop(){
 	running = false;
 }
 
+function start(){
+	isOnCountdown = true;
+	restart();
+}
+
+var lastGeneratedBallTime = 0;
+var isOnCountdown = true;
+
 function restart(){
-	
 	Math.seedrandom(getSeed());
 	replayableGame = true;
 	gameEnded = false;
@@ -293,24 +299,28 @@ function restart(){
 	requestAnimationFrame(loop);
 }
 
-function loop(){
-	if(!running) return;
-	var currentTime = Date.now();
-	delta += currentTime - lastLoopTime;
-	if(delta < frameLimit){
-		lastLoopTime = Date.now();
-		requestAnimationFrame(loop);
-		return;	
+function stepCountDown(timePassedInSeconds){
+	if(timePassedInSeconds >= gameOptions.countdown){
+		isOnCountdown = false;
+		setCanvasContextDefaultValues();
+		return;
 	}
-	timePassed+=frameLimit;
-	var timePassedInSeconds = Math.floor(timePassed/1000);
+	setCanvasContextDefaultValues();
+	for(var i=elements.length-1;i>=0;i--){
+		elements[i].paint(delta);
+	}
+	context.font = "bold 200px Arial";
+	context.fillStyle = "rgba(255, 0, 0, 0.5 )";
+	fillStrokedText(gameOptions.countdown-timePassedInSeconds, canvas.width/2, canvas.height/2);
+}
+
+function stepGame(timePassedInSeconds){
 	if(timePassedInSeconds-lastGeneratedBallTime >= gameOptions.generationInterval){
 		lastGeneratedBallTime = timePassedInSeconds;
 		killerBall();
 	}
 	
 	printTime(Math.floor(timePassed/1000));
-	context.clearRect(0, 0,canvas.width, canvas.height);
 	for(var i=0;i<elements.length;i++){elements[i].x+=elements[i].xSpeed;
 		elements[i].y+=elements[i].ySpeed;
 		
@@ -348,7 +358,27 @@ function loop(){
 			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
 				showWinningScreen(elements[i].name);
 		}
+	}	
+}
+
+function loop(){
+	if(!running) return;
+	var currentTime = Date.now();
+	delta += currentTime - lastLoopTime;
+	if(delta < frameLimit){
+		lastLoopTime = Date.now();
+		requestAnimationFrame(loop);
+		return;	
 	}
+	timePassed+=frameLimit;
+	var timePassedInSeconds = Math.floor(timePassed/1000);
+	context.clearRect(0, 0,canvas.width, canvas.height);
+	
+	if(isOnCountdown)
+		stepCountDown(timePassedInSeconds);
+	else
+		stepGame(timePassedInSeconds);	
+	
 	lastLoopTime = Date.now();
 	delta = 0;
 	requestAnimationFrame(loop);			
