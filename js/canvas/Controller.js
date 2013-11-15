@@ -46,7 +46,7 @@ playElement.onclick = function(){
 	gameOptions.prizes = prizesElement.value;
 	
 	context.clearRect(0, 0, canvas.width, canvas.height);
-	setCanvaContextDefaultValues();
+	setCanvasContextDefaultValues();
 	
 	console.log(gameOptions);
 	
