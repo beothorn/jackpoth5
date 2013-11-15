@@ -299,9 +299,8 @@ function restart(){
 	requestAnimationFrame(loop);
 }
 
-var contdown = 10;
 function stepCountDown(timePassedInSeconds){
-	if(timePassedInSeconds >= contdown){
+	if(timePassedInSeconds >= gameOptions.countdown){
 		isOnCountdown = false;
 		setCanvasContextDefaultValues();
 		return;
@@ -312,7 +311,7 @@ function stepCountDown(timePassedInSeconds){
 	}
 	context.font = "bold 200px Arial";
 	context.fillStyle = "rgba(255, 0, 0, 0.5 )";
-	fillStrokedText(contdown-timePassedInSeconds, canvas.width/2, canvas.height/2);
+	fillStrokedText(gameOptions.countdown-timePassedInSeconds, canvas.width/2, canvas.height/2);
 }
 
 function stepGame(timePassedInSeconds){

@@ -9,6 +9,7 @@ var ballSpeedElement = document.getElementById("ballsSpeed");
 var prizesElement = document.getElementById("prizes");
 var loadingElement = document.getElementById("loading");
 var playElement = document.getElementById("playButton");
+var countdownElement = document.getElementById("countdown");
 
 playElement.style.display="none";
 
@@ -44,6 +45,7 @@ playElement.onclick = function(){
 	gameOptions.generationInterval = generationIntervalElement.value;
 	gameOptions.ballSpeed = ballSpeedElement.value;
 	gameOptions.prizes = prizesElement.value;
+	gameOptions.countdown = countdownElement.value;
 	
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	setCanvasContextDefaultValues();
