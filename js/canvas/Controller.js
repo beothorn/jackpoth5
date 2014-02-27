@@ -15,6 +15,25 @@ playElement.style.display="none";
 
 var gameOptions = {};
 
+
+
+function getSearchParameters() {
+      var prmstr = window.location.search.substr(1);
+      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}
+
+
+
 playElement.onclick = function(){
  
     gameOptions.players = runnersElement.value.split('\n').sort().filter(
@@ -49,8 +68,16 @@ playElement.onclick = function(){
 	
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	setCanvasContextDefaultValues();
+		
+	var stateObject = {}; 
+	var title = "Game";
+	var newUrl = "?gameId="+seed+"-"+canvas.width+"-"+canvas.height;
+	history.pushState(stateObject,title,newUrl);
 	
-	console.log(gameOptions);
+	window.addEventListener('popstate', function(event) {
+		var params = getSearchParameters();
+  		console.log(params); 
+	}); 
 	
     start();
 }

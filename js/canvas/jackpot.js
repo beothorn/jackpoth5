@@ -13,6 +13,7 @@ var lastLoopTime = Date.now();
 var delta = 0;
 var replayableGame = true;
 var gameEnded = false;
+var gameSpeed = 1; 
 
 var canvas= document.getElementById("game-canvas");
 var context= canvas.getContext("2d");
@@ -103,6 +104,9 @@ function showWinningScreen(winner){
 var enter = 13;
 var escape = 27;
 var space = 32;
+var leftKey = 37;
+var rightKey = 39;
+
 document.onkeydown = function(e) {
 	if(running && !isOnCountdown){ 
     	if(e.keyCode === enter){
@@ -111,6 +115,16 @@ document.onkeydown = function(e) {
 			e.preventDefault();
 		}
     }
+    if(e.keyCode === leftKey){
+    	gameSpeed--;
+    	if(gameSpeed<1)
+    		gameSpeed = 1
+		e.preventDefault();
+	}
+	if(e.keyCode === rightKey){
+		gameSpeed++;
+		e.preventDefault();
+	}
 	if(e.keyCode === escape){
 		stop();
 		e.preventDefault();
@@ -314,13 +328,7 @@ function stepCountDown(timePassedInSeconds){
 	fillStrokedText(gameOptions.countdown-timePassedInSeconds, canvas.width/2, canvas.height/2);
 }
 
-function stepGame(timePassedInSeconds){
-	if(timePassedInSeconds-lastGeneratedBallTime >= gameOptions.generationInterval){
-		lastGeneratedBallTime = timePassedInSeconds;
-		killerBall();
-	}
-	
-	printTime(Math.floor(timePassed/1000));
+function step(){
 	for(var i=0;i<elements.length;i++){elements[i].x+=elements[i].xSpeed;
 		elements[i].y+=elements[i].ySpeed;
 		
@@ -358,7 +366,17 @@ function stepGame(timePassedInSeconds){
 			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
 				showWinningScreen(elements[i].name);
 		}
-	}	
+	}
+}
+
+function stepGame(timePassedInSeconds){
+	if(timePassedInSeconds-lastGeneratedBallTime >= gameOptions.generationInterval){
+		lastGeneratedBallTime = timePassedInSeconds;
+		killerBall();
+	}
+	
+	printTime(Math.floor(timePassed/1000));
+	step();                             		
 }
 
 function loop(){
@@ -370,16 +388,20 @@ function loop(){
 		requestAnimationFrame(loop);
 		return;	
 	}
-	timePassed+=frameLimit;
-	var timePassedInSeconds = Math.floor(timePassed/1000);
-	context.clearRect(0, 0,canvas.width, canvas.height);
+	for(var i=0;i<gameSpeed;i++){
+		timePassed+=frameLimit;
+		var timePassedInSeconds = Math.floor(timePassed/1000);
+		context.clearRect(0, 0,canvas.width, canvas.height);
 	
-	if(isOnCountdown)
-		stepCountDown(timePassedInSeconds);
-	else
-		stepGame(timePassedInSeconds);	
+		if(isOnCountdown)
+			stepCountDown(timePassedInSeconds);
+		else
+			stepGame(timePassedInSeconds);	
 	
-	lastLoopTime = Date.now();
-	delta = 0;
+		lastLoopTime = Date.now();
+		delta = 0;
+		if(gameEnded)
+			break;
+	}
 	requestAnimationFrame(loop);			
 }
