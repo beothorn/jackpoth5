@@ -364,7 +364,7 @@ function step(){
 		running = false;
 		for(var i=elements.length-1;i>=0;i--){
 			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
-				alert(elements[i].name);
+				showWinningScreen(elements[i].name);
 		}
 	}
 }
