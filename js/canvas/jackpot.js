@@ -356,7 +356,7 @@ function stepGame(timePassedInSeconds){
 		running = false;
 		for(var i=elements.length-1;i>=0;i--){
 			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
-				showWinningScreen(elements[i].name);
+				alert(elements[i].name);
 		}
 	}	
 }
