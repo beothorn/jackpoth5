@@ -47,7 +47,7 @@ function fillStrokedText(text, x, y){
 }
 
 function calcNewFontSize(ballQntd){
-	var size = Math.max(-Math.pow(ballQntd,1.5) + maxBallFontSize, 20);
+	var size = Math.max(-Math.pow(ballQntd,1.5) + maxBallFontSize, 40);
 	context.font = "bold "+size+"px Arial";
 	context.strokeStyle = "black";
 	context.lineWidth = 3;
