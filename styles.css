@@ -1,0 +1,36 @@
+#config{
+    padding: 4vw;
+    margin: 1vw;
+    border: 1px #bdbdbd solid;
+    border-radius: 1vw;
+    background: #929292;
+    color: #ececec;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+#playButton{
+    font-size: 11vw;
+    text-align: center;
+}
+
+#instructions{
+    border: 1px #bdbdbd solid;
+    margin: 1vw;
+    padding: 1vw;
+    border-radius: 1vw;
+    color: #777777;
+    background: #bdbdbd;
+}
+
+input, textarea{
+    display: block;
+    font-size: 5vw;
+    width: 100%;
+}
+
+.row{
+    display: block;
+    font-size: 5vw;
+    margin: 1vw;
+    margin-left: 0vw;
+}

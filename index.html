@@ -12,18 +12,25 @@ canvas{
 	margin: 0px;	
 }
 </style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 	
 	<canvas id="game-canvas" width="1024" height="768" style="display:none;" >
 		Your browser does not support the HTML5 canvas tag.
 	</canvas>
+
 <div id="config">
-	White ball generation interval: <input type="text" id="generationInterval" value="5"><br>
-	Balls speed: <input type="text" id="ballsSpeed" value="10"><br>
-	Prizes: <input type="text" id="prizes" value="1"><br>
-	Countdown: <input type="text" id="countdown" value="10"><br>
-	Players:<br><textarea id="runners" rows="50" cols="50">Adriano
+	<span class="row">White ball generation interval:</span> 
+	<input type="text" id="generationInterval" value="1">
+	<span class="row">Balls speed:</span>
+	<input type="text" id="ballsSpeed" value="5">
+	<span class="row">Prizes:</span>
+	<input type="text" id="prizes" value="1">
+	<span class="row">Countdown:</span>
+	<input type="text" id="countdown" value="5">
+	<span class="row">Players:</span>
+	<textarea id="runners" rows="10" cols="50">Adriano
 Antonio
 Arbo
 Caimi
@@ -93,22 +100,20 @@ Ludivina Boddie
 Veronique Hawkinson
 Ayanna Keala
 Breana Fortney
-Josphine Mattson</textarea><br>
-<p>	Before pressing play use f11 to go fullscreen
-	<br>
-	Commands:
-	<br>
-	Enter: add ball
-	<br>
-	Space: pause
-	<br>
-	left/right: control speed
-	<br>
-	Esc: exit
+Josphine Mattson</textarea>
+	<div id="instructions">
+		<span class="row">Before pressing play use f11 to go fullscreen</span>
+		<span class="row">Commands:</span>
+		<span class="row">Enter: add ball</span>
+		<span class="row">Space: pause</span>
+		<span class="row">left/right: control speed</span>
+		<span class="row">Esc: exit</span>
+	</div>
 </p>
 	<span id="loading">Loading resouces...</span>	
-	<a><img src="images/canvas/play.png" id="playButton"></a>
+	<a id="playButton">Start</a>
 </div>
+
 	<script type="text/javascript" src="js/canvas/Resources.js"></script>
 	<script type="text/javascript" src="js/canvas/BallFactory.js"></script>
 	<script type="text/javascript" src="js/canvas/seedrandom.js"></script>

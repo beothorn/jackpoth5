@@ -1,7 +1,7 @@
 var ballWidth = 26;
 var ballHeight = 26;
-var radius = ballWidth/2;
-var diameter = 2 * radius; 
+var radius = ballWidth / 2;
+var diameter = 2 * radius;
 var diameterPowerOfTwo = diameter * diameter;
 var elements;
 var oneSecond = 1000;
@@ -13,7 +13,8 @@ var lastLoopTime = Date.now();
 var delta = 0;
 var replayableGame = true;
 var gameEnded = false;
-var gameSpeed = 1; 
+var gameSpeed = 1;
+var maxBallFontSize = 80;
 
 var canvas= document.getElementById("game-canvas");
 var context= canvas.getContext("2d");
@@ -43,6 +44,15 @@ resources.load(
 function fillStrokedText(text, x, y){
 	context.strokeText(text, x, y);
 	context.fillText(text, x, y);
+}
+
+function calcNewFontSize(ballQntd){
+	var size = Math.max(-Math.pow(ballQntd,1.5) + maxBallFontSize, 20);
+	context.font = "bold "+size+"px Arial";
+	context.strokeStyle = "black";
+	context.lineWidth = 3;
+	context.fillStyle = "white";
+	context.textAlign="center";
 }
 
 function setCanvasContextDefaultValues(){
@@ -108,6 +118,7 @@ var leftKey = 37;
 var rightKey = 39;
 
 document.onkeydown = function(e) {
+    
 	if(running && !isOnCountdown){ 
     	if(e.keyCode === enter){
 			replayableGame = false;
@@ -320,6 +331,7 @@ function stepCountDown(timePassedInSeconds){
 		return;
 	}
 	setCanvasContextDefaultValues();
+	calcNewFontSize(elements.length);
 	for(var i=elements.length-1;i>=0;i--){
 		elements[i].paint(delta);
 	}
@@ -351,15 +363,20 @@ function step(){
 		
 	}
 	var liveCount = 0;
+	
 	for(var i=elements.length-1;i>=0;i--){
 		if(elements[i].dead){
 			elements.splice(elements.indexOf(elements[i]), 1);
 		}else{
 			if(!elements[i].killer && !elements[i].dying)
 				liveCount++;
-			elements[i].paint(delta);
 		}
 	}
+	calcNewFontSize(liveCount);
+	for(var i=elements.length-1;i>=0;i--){
+		elements[i].paint(delta);
+	}
+
 	if(liveCount == gameOptions.prizes){
 		running = false;
 		for(var i=elements.length-1;i>=0;i--){
