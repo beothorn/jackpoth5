@@ -89,26 +89,32 @@ function freezeScreen(){
 		}
 	}
 	context.putImageData(currentPixels, 0, 0);
-	context.fillStyle = "rgba(255, 255, 255, 0.5 )";
+	context.fillStyle = "rgba(255, 255, 255, 0.95 )";
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	setCanvasContextPausedScreenValues();
 }
 
-function showWinningScreen(winner){
+function showWinningScreen(winners){
+	console.log("winners");
+	console.log(winners);
 	gameEnded = true;
 	freezeScreen();
-	context.font = "bold 40px Arial";
+	var winnerTitleSize = 40;
+	var halfWinnerTitleSize = winnerTitleSize/ 2;
+	var offset = 20;
+	context.font = "bold "+winnerTitleSize+"px Arial";
 	context.fillStyle = "gray";
-	fillStrokedText("Winner", canvas.width/2, canvas.height/2 - 80);
-	context.font = "bold 80px Arial";
+	var winnerTag = "Winner"; 
+	if(winners.length > 1)
+		winnerTag = "Winners";
+	fillStrokedText(winnerTag, canvas.width/2, offset+halfWinnerTitleSize);
+	var winnerNameSize = 80;
+	context.font = "bold "+winnerNameSize+"px Arial";
 	context.fillStyle = "yellow";
-	fillStrokedText(winner, canvas.width/2, canvas.height/2);
-	setCanvasContextPausedScreenValues();
-	if(replayableGame){
-		fillStrokedText("Seed: "+getSeed(), canvas.width/2, canvas.height/2 + 80);
-		fillStrokedText("Width: "+canvas.width, canvas.width/2, canvas.height/2 + 80 + 40);
-		fillStrokedText("Height: "+canvas.height, canvas.width/2, canvas.height/2 + 80 + 40 + 40);	
+	for(var i=0;i<winners.length;i++){
+		fillStrokedText(winners[i], canvas.width/2, offset+winnerTitleSize + (winnerNameSize*(winners.length-i)));
 	}
+	setCanvasContextPausedScreenValues();
 }
 
 var enter = 13;
@@ -378,11 +384,13 @@ function step(){
 	}
 
 	if(liveCount == gameOptions.prizes){
+		var winners = [];
 		running = false;
 		for(var i=elements.length-1;i>=0;i--){
 			if(!elements[i].dead &&!elements[i].killer && !elements[i].dying)
-				showWinningScreen(elements[i].name);
+				winners.push(elements[i].name);
 		}
+		showWinningScreen(winners);
 	}
 }
 
