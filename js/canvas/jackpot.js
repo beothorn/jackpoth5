@@ -11,7 +11,6 @@ var running = false;
 var timePassed = 0;
 var lastLoopTime = Date.now();
 var delta = 0;
-var replayableGame = true;
 var gameEnded = false;
 var gameSpeed = 1;
 var maxBallFontSize = 80;
@@ -125,14 +124,7 @@ var rightKey = 39;
 
 document.onkeydown = function(e) {
     
-	if(running && !isOnCountdown){ 
-    	if(e.keyCode === enter){
-			replayableGame = false;
-			killerBall();
-			e.preventDefault();
-		}
-    }
-    if(e.keyCode === leftKey){
+  if(e.keyCode === leftKey){
     	gameSpeed--;
     	if(gameSpeed<1)
     		gameSpeed = 1
@@ -160,7 +152,7 @@ document.onkeydown = function(e) {
 			context.fillStyle = "yellow";
 			fillStrokedText("Paused", canvas.width/2, canvas.height/2);
 			setCanvasContextPausedScreenValues();
-			fillStrokedText("Add ball: <Enter>", canvas.width/2, canvas.height/2 + 80);
+			fillStrokedText("Change speed with arrows", canvas.width/2, canvas.height/2 + 80);
 			fillStrokedText("Exit: <Esc>", canvas.width/2, canvas.height/2 + 80 + 40);
 			
 			setCanvasContextDefaultValues();
@@ -307,7 +299,6 @@ var isOnCountdown = true;
 
 function restart(){
 	Math.seedrandom(getSeed());
-	replayableGame = true;
 	gameEnded = false;
 	var names = gameOptions.players;
 	

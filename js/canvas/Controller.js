@@ -1,7 +1,5 @@
 var runnersElement = document.getElementById("runners");
 var configElement = document.getElementById("config");
-var generationIntervalElement = document.getElementById("generationInterval");
-var ballSpeedElement = document.getElementById("ballsSpeed");
 var prizesElement = document.getElementById("prizes");
 var loadingElement = document.getElementById("loading");
 var playElement = document.getElementById("playButton");
@@ -46,7 +44,7 @@ function getHeightFromUrl(){
 
 playElement.onclick = function(){
  
-    gameOptions.players = runnersElement.value.split('\n').sort().filter(
+  gameOptions.players = runnersElement.value.split('\n').sort().filter(
 		function (value, index, self) { 
     		return self.indexOf(value) === index;
 		}
@@ -69,8 +67,8 @@ playElement.onclick = function(){
 		
 	gameOptions.seed = seed;
 	
-	gameOptions.generationInterval = generationIntervalElement.value;
-	gameOptions.ballSpeed = ballSpeedElement.value;
+	gameOptions.generationInterval = 5;
+	gameOptions.ballSpeed = 5;
 	gameOptions.prizes = prizesElement.value;
 	gameOptions.countdown = countdownElement.value;
 	
@@ -79,7 +77,7 @@ playElement.onclick = function(){
 		
 	var stateObject = {}; 
 	var title = "Game";
-	var newUrl = "?gameId="+seed+"-"+canvas.width+"-"+canvas.height;
+	  var newUrl = "?seed="+seed+"&prizes="+"&width="+canvas.width+"&height="+canvas.height+"&players="+gameOptions.players.join(",");
 	history.pushState(stateObject,title,newUrl);
 	
 	window.addEventListener('popstate', function(event) {
