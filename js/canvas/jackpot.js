@@ -38,7 +38,7 @@ resources.load(
 		  playElement.style.display="block";
       var loadFromUrl = function(){
           var opts = transformToAssocArray(window.location.hash.substr(1));
-          gameOptions.players = opts.players.split(',');
+          gameOptions.players = opts.players.split(',').map(s => s.replace("%20", " "));
 	        
 	        configElement.style.display="none";
           canvasParentElement.style.display="flex";
