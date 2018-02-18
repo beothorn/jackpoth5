@@ -1,5 +1,6 @@
 var runnersElement = document.getElementById("runners");
 var configElement = document.getElementById("config");
+var canvasParentElement = document.getElementById("canvas-container");
 var prizesElement = document.getElementById("prizes");
 var loadingElement = document.getElementById("loading");
 var playElement = document.getElementById("playButton");
@@ -34,14 +35,6 @@ function getSeedFromUrl(){
 	return "foo";
 }
 
-function getWidthFromUrl(){
-	return 800;
-}
-
-function getHeightFromUrl(){
-	return 600;
-}
-
 playElement.onclick = function(){
  
   gameOptions.players = runnersElement.value.split('\n').sort().filter(
@@ -51,18 +44,14 @@ playElement.onclick = function(){
 	);
 	
 	configElement.style.display="none";
-	canvas.style.display="block";
+  canvasParentElement.style.display="flex";
 	
 	var dateNow = Date.now()+"";
 	var seed = dateNow.substr(dateNow.length-3,dateNow.length);
 	
 	if(urlHasSeed()){
-	    seed = getSeedFromUrl();
-	    context.canvas.width  = getWidthFromUrl();
-		context.canvas.height = getHeightFromUrl();
+    seed = getSeedFromUrl();
 	}else{
-	    context.canvas.width  = window.innerWidth;
-		context.canvas.height = window.innerHeight;	
 	}
 		
 	gameOptions.seed = seed;
@@ -77,7 +66,7 @@ playElement.onclick = function(){
 		
 	var stateObject = {}; 
 	var title = "Game";
-	  var newUrl = "?seed="+seed+"&prizes="+"&width="+canvas.width+"&height="+canvas.height+"&players="+gameOptions.players.join(",");
+	  var newUrl = "?seed="+seed+"&prizes="+gameOptions.prizes+"&players="+gameOptions.players.join(",");
 	history.pushState(stateObject,title,newUrl);
 	
 	window.addEventListener('popstate', function(event) {
