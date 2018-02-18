@@ -1,4 +1,4 @@
-#Jackpot6
+# Jackpot6
 
 A clone of https://github.com/caimi/jackpoth5 implemented using canvas
 
