@@ -25,15 +25,6 @@ function transformToAssocArray( prmstr ) {
     return params;
 }
 
-function urlHasSeed(){
-	console.log(document.URL);
-	return false;
-}
-
-
-function getSeedFromUrl(){
-	return "foo";
-}
 
 playElement.onclick = function(){
  
@@ -49,11 +40,6 @@ playElement.onclick = function(){
 	var dateNow = Date.now()+"";
 	var seed = dateNow.substr(dateNow.length-3,dateNow.length);
 	
-	if(urlHasSeed()){
-    seed = getSeedFromUrl();
-	}else{
-	}
-		
 	gameOptions.seed = seed;
 	
 	gameOptions.generationInterval = 5;
@@ -66,18 +52,13 @@ playElement.onclick = function(){
 		
 	var stateObject = {}; 
 	var title = "Game";
-	  var newUrl = "?seed="+seed+"&prizes="+gameOptions.prizes+"&players="+gameOptions.players.join(",");
-	history.pushState(stateObject,title,newUrl);
-	
-	window.addEventListener('popstate', function(event) {
-		var params = getSearchParameters();
-  		console.log(params); 
-	}); 
-	
-    start();
+  var newUrl = "#seed="+seed+"&prizes="+gameOptions.prizes+"&players="+gameOptions.players.join(",");
+	  history.pushState(stateObject,title,newUrl);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
 }
 
 function gameStopped(){
     configElement.style.display="block";
 	canvas.style.display="none";
 }
+

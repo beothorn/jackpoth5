@@ -35,7 +35,31 @@ resources.load(
 		loadingComplete: function(){
 			console.log("Done");
 			loadingElement.style.display="none";
-			playElement.style.display="block";
+		  playElement.style.display="block";
+      var loadFromUrl = function(){
+          var opts = transformToAssocArray(window.location.hash.substr(1));
+          gameOptions.players = opts.players.split(',');
+	        
+	        configElement.style.display="none";
+          canvasParentElement.style.display="flex";
+	        
+	        gameOptions.seed = opts.seed;
+	        
+	        gameOptions.generationInterval = 5;
+	        gameOptions.ballSpeed = 5;
+	        gameOptions.prizes = opts.prizes;
+	        gameOptions.countdown = 10;
+	        
+	        context.clearRect(0, 0, canvas.width, canvas.height);
+	        setCanvasContextDefaultValues();
+		      
+          restart();
+      }
+      if(window.location.hash.substr(1) !== ""){
+          loadFromUrl();
+      }
+      window.addEventListener("hashchange", loadFromUrl, false);
+
 		} 
 	}
 );
